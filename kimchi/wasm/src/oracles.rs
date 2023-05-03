@@ -1,11 +1,13 @@
 use kimchi::circuits::scalars::RandomOracles;
 use kimchi::proof::ProverProof;
 use kimchi::verifier_index::VerifierIndex as DlogVerifierIndex;
+// clippy says FqSponge is unused: it's really not
+#[allow(unused_imports)] 
 use mina_poseidon::{
     self,
     constants::PlonkSpongeConstantsKimchi,
     sponge::{DefaultFqSponge, DefaultFrSponge},
-    FqSponge,
+    FqSponge, 
 };
 use paste::paste;
 use poly_commitment::commitment::{shift_scalar, PolyComm};
@@ -139,8 +141,6 @@ macro_rules! impl_oracles {
             #[derive(Clone)]
             pub struct [<Wasm $field_name:camel Oracles>] {
                 pub o: [<Wasm $field_name:camel RandomOracles>],
-                pub p_eval0: $WasmF,
-                pub p_eval1: $WasmF,
                 #[wasm_bindgen(skip)]
                 pub opening_prechallenges: WasmFlatVector<$WasmF>,
                 pub digest_before_evaluations: $WasmF,
@@ -151,11 +151,9 @@ macro_rules! impl_oracles {
                 #[wasm_bindgen(constructor)]
                 pub fn new(
                     o: WasmRandomOracles,
-                    p_eval0: $WasmF,
-                    p_eval1: $WasmF,
                     opening_prechallenges: WasmFlatVector<$WasmF>,
                     digest_before_evaluations: $WasmF) -> Self {
-                    Self {o, p_eval0, p_eval1, opening_prechallenges, digest_before_evaluations}
+                    Self {o, opening_prechallenges, digest_before_evaluations}
                 }
 
                 #[wasm_bindgen(getter)]
@@ -211,10 +209,9 @@ macro_rules! impl_oracles {
                 let oracles_result =
                     proof.oracles::<DefaultFqSponge<$curve_params, PlonkSpongeConstantsKimchi>, DefaultFrSponge<$F, PlonkSpongeConstantsKimchi>>(&index, &p_comm,&public_input).map_err(|e| JsValue::from_str(&format!("oracles_create: {}", e)))?;
 
-                let (mut sponge, combined_inner_product, p_eval, digest, oracles) = (
+                let (mut sponge, combined_inner_product, digest, oracles) = (
                     oracles_result.fq_sponge,
                     oracles_result.combined_inner_product,
-                    oracles_result.public_evals,
                     oracles_result.digest,
                     oracles_result.oracles,
                 );
@@ -230,8 +227,6 @@ macro_rules! impl_oracles {
 
                 Ok([<Wasm $field_name:camel Oracles>] {
                     o: oracles.into(),
-                    p_eval0: p_eval[0][0].into(),
-                    p_eval1: p_eval[1][0].into(),
                     opening_prechallenges,
                     digest_before_evaluations: digest.into(),
                 })
@@ -241,8 +236,6 @@ macro_rules! impl_oracles {
             pub fn [<$F:snake _oracles_dummy>]() -> [<Wasm $field_name:camel Oracles>] {
                 [<Wasm $field_name:camel Oracles>] {
                     o: RandomOracles::<$F>::default().into(),
-                    p_eval0: $F::zero().into(),
-                    p_eval1: $F::zero().into(),
                     opening_prechallenges: vec![].into(),
                     digest_before_evaluations: $F::zero().into(),
                 }

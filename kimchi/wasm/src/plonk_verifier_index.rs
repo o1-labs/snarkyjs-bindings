@@ -7,7 +7,7 @@ use kimchi::circuits::{
     constraints::FeatureFlags,
     lookup::lookups::{LookupFeatures, LookupPatterns},
     polynomials::permutation::Shifts,
-    polynomials::permutation::{zk_polynomial, zk_w3},
+    polynomials::permutation::{vanishes_on_last_n_rows, zk_w},
     wires::{COLUMNS, PERMUTS},
 };
 use kimchi::linearization::expr_linearization;
@@ -378,12 +378,14 @@ macro_rules! impl_verification_key {
                         },
                     };
 
-                let (linearization, powers_of_alpha) = expr_linearization(Some(&feature_flags), true);
-
+                // TODO: num_chunks
+                let (linearization, powers_of_alpha) = expr_linearization(Some(&feature_flags), true, 1);
+                let zk_rows = 3;
+                
                 let index =
                     DlogVerifierIndex {
                         domain,
-
+                        zk_rows,
                         sigma_comm: array_init(|i| (&evals.sigma_comm[i]).into()),
                         generic_comm: (&evals.generic_comm).into(),
                         coefficients_comm: array_init(|i| (&evals.coefficients_comm[i]).into()),
@@ -405,16 +407,16 @@ macro_rules! impl_verification_key {
 
                         w: {
                             let res = once_cell::sync::OnceCell::new();
-                            res.set(zk_w3(domain)).unwrap();
+                            res.set(zk_w(domain, zk_rows)).unwrap();
                             res
                         },
                         endo: endo_q,
                         max_poly_size: max_poly_size as usize,
                         public: public_ as usize,
                         prev_challenges: prev_challenges as usize,
-                        zkpm: {
+                        permutation_vanishing_polynomial_m: {
                             let res = once_cell::sync::OnceCell::new();
-                            res.set(zk_polynomial(domain)).unwrap();
+                            res.set(vanishes_on_last_n_rows(domain, zk_rows)).unwrap();
                             res
                         },
                         shift: [
