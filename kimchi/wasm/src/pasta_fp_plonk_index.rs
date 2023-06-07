@@ -130,7 +130,10 @@ pub fn caml_pasta_fp_plonk_index_read(
     let mut t = ProverIndex::<GAffine>::deserialize(&mut rmp_serde::Deserializer::new(r))
         .map_err(|err| JsValue::from_str(&format!("caml_pasta_fp_plonk_index_read: {}", err)))?;
     t.srs = srs.0.clone();
-    let (linearization, powers_of_alpha) = expr_linearization(Some(&t.cs.feature_flags), true);
+
+    let zk_rows = 3;
+    let (linearization, powers_of_alpha) =
+        expr_linearization(Some(&t.cs.feature_flags), true, zk_rows);
     t.linearization = linearization;
     t.powers_of_alpha = powers_of_alpha;
 

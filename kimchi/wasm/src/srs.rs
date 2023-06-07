@@ -157,7 +157,8 @@ macro_rules! impl_srs {
                 let evals = evals.into_iter().map(Into::into).collect();
                 let p = Evaluations::<$F>::from_vec_and_domain(evals, x_domain).interpolate();
 
-                Ok(srs.commit_non_hiding(&p, None).into())
+                // TODO: num_chunks
+                Ok(srs.commit_non_hiding(&p, 1, None).into())
             }
 
             #[wasm_bindgen]
@@ -169,7 +170,8 @@ macro_rules! impl_srs {
                     let chals: Vec<$F> = chals.into_iter().map(Into::into).collect();
                     let coeffs = b_poly_coefficients(&chals);
                     let p = DensePolynomial::<$F>::from_coefficients_vec(coeffs);
-                    srs.commit_non_hiding(&p, None)
+                    let num_chunks = 1;
+                    srs.commit_non_hiding(&p, num_chunks, None)
                 });
                 Ok(result.into())
             }

@@ -1,6 +1,8 @@
 use kimchi::circuits::scalars::RandomOracles;
 use kimchi::proof::ProverProof;
 use kimchi::verifier_index::VerifierIndex as DlogVerifierIndex;
+// clippy says FqSponge is unused: it's really not
+#[allow(unused_imports)]
 use mina_poseidon::{
     self,
     constants::PlonkSpongeConstantsKimchi,

@@ -695,6 +695,7 @@ macro_rules! impl_proof {
                     zeta_omega: vec![$F::one()],
                 };
                 let evals = ProofEvaluations {
+                    public: Some(eval()),
                     w: array_init(|_| eval()),
                     coefficients: array_init(|_| eval()),
                     z: eval(),
