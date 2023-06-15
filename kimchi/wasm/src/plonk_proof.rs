@@ -702,6 +702,7 @@ macro_rules! impl_proof {
                     lookup: None,
                     generic_selector: eval(),
                     poseidon_selector: eval(),
+                    public:Some(eval()),
                 };
 
                 let dlogproof = ProverProof {
