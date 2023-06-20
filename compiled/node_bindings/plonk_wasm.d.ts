@@ -159,6 +159,72 @@ export function caml_pasta_fp_poseidon_block_cipher(state: Uint8Array): Uint8Arr
 */
 export function caml_pasta_fq_poseidon_block_cipher(state: Uint8Array): Uint8Array;
 /**
+* @param {number} depth
+* @returns {WasmFpSrs}
+*/
+export function caml_fp_srs_create(depth: number): WasmFpSrs;
+/**
+* @param {WasmFpSrs} srs
+* @param {number} log2_size
+*/
+export function caml_fp_srs_add_lagrange_basis(srs: WasmFpSrs, log2_size: number): void;
+/**
+* @param {boolean | undefined} append
+* @param {WasmFpSrs} srs
+* @param {string} path
+*/
+export function caml_fp_srs_write(append: boolean | undefined, srs: WasmFpSrs, path: string): void;
+/**
+* @param {number | undefined} offset
+* @param {string} path
+* @returns {WasmFpSrs | undefined}
+*/
+export function caml_fp_srs_read(offset: number | undefined, path: string): WasmFpSrs | undefined;
+/**
+* @param {WasmFpSrs} srs
+* @param {number} domain_size
+* @param {number} i
+* @returns {WasmFpPolyComm}
+*/
+export function caml_fp_srs_lagrange_commitment(srs: WasmFpSrs, domain_size: number, i: number): WasmFpPolyComm;
+/**
+* @param {WasmFpSrs} srs
+* @param {number} domain_size
+* @param {Uint8Array} evals
+* @returns {WasmFpPolyComm}
+*/
+export function caml_fp_srs_commit_evaluations(srs: WasmFpSrs, domain_size: number, evals: Uint8Array): WasmFpPolyComm;
+/**
+* @param {WasmFpSrs} srs
+* @param {Uint8Array} chals
+* @returns {WasmFpPolyComm}
+*/
+export function caml_fp_srs_b_poly_commitment(srs: WasmFpSrs, chals: Uint8Array): WasmFpPolyComm;
+/**
+* @param {WasmFpSrs} srs
+* @param {Uint32Array} comms
+* @param {Uint8Array} chals
+* @returns {boolean}
+*/
+export function caml_fp_srs_batch_accumulator_check(srs: WasmFpSrs, comms: Uint32Array, chals: Uint8Array): boolean;
+/**
+* @param {WasmFpSrs} srs
+* @param {number} comms
+* @param {Uint8Array} chals
+* @returns {Uint32Array}
+*/
+export function caml_fp_srs_batch_accumulator_generate(srs: WasmFpSrs, comms: number, chals: Uint8Array): Uint32Array;
+/**
+* @param {WasmFpSrs} srs
+* @returns {WasmGVesta}
+*/
+export function caml_fp_srs_h(srs: WasmFpSrs): WasmGVesta;
+/**
+* @param {WasmPastaFpPlonkIndex} prover_index
+* @returns {string}
+*/
+export function prover_to_json(prover_index: WasmPastaFpPlonkIndex): string;
+/**
 * @returns {WasmFpGateVector}
 */
 export function caml_pasta_fp_plonk_gate_vector_create(): WasmFpGateVector;
@@ -236,67 +302,6 @@ export function caml_pasta_fq_plonk_gate_vector_digest(public_input_size: number
 export function caml_pasta_fq_plonk_circuit_serialize(public_input_size: number, v: WasmFqGateVector): string;
 /**
 * @param {number} depth
-* @returns {WasmFpSrs}
-*/
-export function caml_fp_srs_create(depth: number): WasmFpSrs;
-/**
-* @param {WasmFpSrs} srs
-* @param {number} log2_size
-*/
-export function caml_fp_srs_add_lagrange_basis(srs: WasmFpSrs, log2_size: number): void;
-/**
-* @param {boolean | undefined} append
-* @param {WasmFpSrs} srs
-* @param {string} path
-*/
-export function caml_fp_srs_write(append: boolean | undefined, srs: WasmFpSrs, path: string): void;
-/**
-* @param {number | undefined} offset
-* @param {string} path
-* @returns {WasmFpSrs | undefined}
-*/
-export function caml_fp_srs_read(offset: number | undefined, path: string): WasmFpSrs | undefined;
-/**
-* @param {WasmFpSrs} srs
-* @param {number} domain_size
-* @param {number} i
-* @returns {WasmFpPolyComm}
-*/
-export function caml_fp_srs_lagrange_commitment(srs: WasmFpSrs, domain_size: number, i: number): WasmFpPolyComm;
-/**
-* @param {WasmFpSrs} srs
-* @param {number} domain_size
-* @param {Uint8Array} evals
-* @returns {WasmFpPolyComm}
-*/
-export function caml_fp_srs_commit_evaluations(srs: WasmFpSrs, domain_size: number, evals: Uint8Array): WasmFpPolyComm;
-/**
-* @param {WasmFpSrs} srs
-* @param {Uint8Array} chals
-* @returns {WasmFpPolyComm}
-*/
-export function caml_fp_srs_b_poly_commitment(srs: WasmFpSrs, chals: Uint8Array): WasmFpPolyComm;
-/**
-* @param {WasmFpSrs} srs
-* @param {Uint32Array} comms
-* @param {Uint8Array} chals
-* @returns {boolean}
-*/
-export function caml_fp_srs_batch_accumulator_check(srs: WasmFpSrs, comms: Uint32Array, chals: Uint8Array): boolean;
-/**
-* @param {WasmFpSrs} srs
-* @param {number} comms
-* @param {Uint8Array} chals
-* @returns {Uint32Array}
-*/
-export function caml_fp_srs_batch_accumulator_generate(srs: WasmFpSrs, comms: number, chals: Uint8Array): Uint32Array;
-/**
-* @param {WasmFpSrs} srs
-* @returns {WasmGVesta}
-*/
-export function caml_fp_srs_h(srs: WasmFpSrs): WasmGVesta;
-/**
-* @param {number} depth
 * @returns {WasmFqSrs}
 */
 export function caml_fq_srs_create(depth: number): WasmFqSrs;
@@ -357,11 +362,6 @@ export function caml_fq_srs_batch_accumulator_generate(srs: WasmFqSrs, comms: nu
 */
 export function caml_fq_srs_h(srs: WasmFqSrs): WasmGPallas;
 /**
-* @param {WasmPastaFpPlonkIndex} prover_index
-* @returns {string}
-*/
-export function prover_to_json(prover_index: WasmPastaFpPlonkIndex): string;
-/**
 * @param {number | undefined} offset
 * @param {WasmFpSrs} srs
 * @param {string} path
@@ -405,20 +405,6 @@ export function caml_pasta_fp_plonk_verifier_index_dummy(): WasmFpPlonkVerifierI
 */
 export function caml_pasta_fp_plonk_verifier_index_deep_copy(x: WasmFpPlonkVerifierIndex): WasmFpPlonkVerifierIndex;
 /**
-* @param {number} num_threads
-* @param {string} worker_source
-* @returns {Promise<any>}
-*/
-export function initThreadPool(num_threads: number, worker_source: string): Promise<any>;
-/**
-* @returns {Promise<any>}
-*/
-export function exitThreadPool(): Promise<any>;
-/**
-* @param {number} receiver
-*/
-export function wbg_rayon_start_worker(receiver: number): void;
-/**
 * @param {number | undefined} offset
 * @param {WasmFqSrs} srs
 * @param {string} path
@@ -461,38 +447,6 @@ export function caml_pasta_fq_plonk_verifier_index_dummy(): WasmFqPlonkVerifierI
 * @returns {WasmFqPlonkVerifierIndex}
 */
 export function caml_pasta_fq_plonk_verifier_index_deep_copy(x: WasmFqPlonkVerifierIndex): WasmFqPlonkVerifierIndex;
-/**
-* @param {Uint32Array} lgr_comm
-* @param {WasmFpPlonkVerifierIndex} index
-* @param {WasmFpProverProof} proof
-* @returns {WasmFpOracles}
-*/
-export function fp_oracles_create(lgr_comm: Uint32Array, index: WasmFpPlonkVerifierIndex, proof: WasmFpProverProof): WasmFpOracles;
-/**
-* @returns {WasmFpOracles}
-*/
-export function fp_oracles_dummy(): WasmFpOracles;
-/**
-* @param {WasmFpProverProof} x
-* @returns {WasmFpProverProof}
-*/
-export function fp_oracles_deep_copy(x: WasmFpProverProof): WasmFpProverProof;
-/**
-* @param {Uint32Array} lgr_comm
-* @param {WasmFqPlonkVerifierIndex} index
-* @param {WasmFqProverProof} proof
-* @returns {WasmFqOracles}
-*/
-export function fq_oracles_create(lgr_comm: Uint32Array, index: WasmFqPlonkVerifierIndex, proof: WasmFqProverProof): WasmFqOracles;
-/**
-* @returns {WasmFqOracles}
-*/
-export function fq_oracles_dummy(): WasmFqOracles;
-/**
-* @param {WasmFqProverProof} x
-* @returns {WasmFqProverProof}
-*/
-export function fq_oracles_deep_copy(x: WasmFqProverProof): WasmFqProverProof;
 /**
 * @param {WasmPastaFpPlonkIndex} index
 * @param {WasmVecVecFp} witness
@@ -551,6 +505,52 @@ export function caml_pasta_fq_plonk_proof_dummy(): WasmFqProverProof;
 * @returns {WasmFqProverProof}
 */
 export function caml_pasta_fq_plonk_proof_deep_copy(x: WasmFqProverProof): WasmFqProverProof;
+/**
+* @param {number} num_threads
+* @param {string} worker_source
+* @returns {Promise<any>}
+*/
+export function initThreadPool(num_threads: number, worker_source: string): Promise<any>;
+/**
+* @returns {Promise<any>}
+*/
+export function exitThreadPool(): Promise<any>;
+/**
+* @param {number} receiver
+*/
+export function wbg_rayon_start_worker(receiver: number): void;
+/**
+* @param {Uint32Array} lgr_comm
+* @param {WasmFpPlonkVerifierIndex} index
+* @param {WasmFpProverProof} proof
+* @returns {WasmFpOracles}
+*/
+export function fp_oracles_create(lgr_comm: Uint32Array, index: WasmFpPlonkVerifierIndex, proof: WasmFpProverProof): WasmFpOracles;
+/**
+* @returns {WasmFpOracles}
+*/
+export function fp_oracles_dummy(): WasmFpOracles;
+/**
+* @param {WasmFpProverProof} x
+* @returns {WasmFpProverProof}
+*/
+export function fp_oracles_deep_copy(x: WasmFpProverProof): WasmFpProverProof;
+/**
+* @param {Uint32Array} lgr_comm
+* @param {WasmFqPlonkVerifierIndex} index
+* @param {WasmFqProverProof} proof
+* @returns {WasmFqOracles}
+*/
+export function fq_oracles_create(lgr_comm: Uint32Array, index: WasmFqPlonkVerifierIndex, proof: WasmFqProverProof): WasmFqOracles;
+/**
+* @returns {WasmFqOracles}
+*/
+export function fq_oracles_dummy(): WasmFqOracles;
+/**
+* @param {WasmFqProverProof} x
+* @returns {WasmFqProverProof}
+*/
+export function fq_oracles_deep_copy(x: WasmFqProverProof): WasmFqProverProof;
 /**
 * @param {string} s
 * @param {number} _len
@@ -1121,6 +1121,107 @@ export class WasmFpGateVector {
 }
 /**
 */
+export class WasmFpLookupFeatures {
+  free(): void;
+/**
+*/
+  joint_lookup_used: boolean;
+/**
+*/
+  patterns: WasmFpLookupPatterns;
+/**
+*/
+  uses_runtime_tables: boolean;
+}
+/**
+*/
+export class WasmFpLookupInfo {
+  free(): void;
+/**
+*/
+  features: WasmFpLookupFeatures;
+/**
+*/
+  max_joint_size: number;
+/**
+*/
+  max_per_row: number;
+}
+/**
+*/
+export class WasmFpLookupPatterns {
+  free(): void;
+/**
+*/
+  foreign_field_mul: boolean;
+/**
+*/
+  lookup: boolean;
+/**
+*/
+  range_check: boolean;
+/**
+*/
+  xor: boolean;
+}
+/**
+*/
+export class WasmFpLookupSelectors {
+  free(): void;
+/**
+* @param {WasmFpPolyComm | undefined} xor
+* @param {WasmFpPolyComm | undefined} lookup
+* @param {WasmFpPolyComm | undefined} range_check
+* @param {WasmFpPolyComm | undefined} ffmul
+*/
+  constructor(xor?: WasmFpPolyComm, lookup?: WasmFpPolyComm, range_check?: WasmFpPolyComm, ffmul?: WasmFpPolyComm);
+/**
+*/
+  ffmul?: WasmFpPolyComm;
+/**
+*/
+  lookup?: WasmFpPolyComm;
+/**
+*/
+  range_check?: WasmFpPolyComm;
+/**
+*/
+  xor?: WasmFpPolyComm;
+}
+/**
+*/
+export class WasmFpLookupVerifier {
+  free(): void;
+/**
+* @param {boolean} joint_lookup_used
+* @param {Uint32Array} lookup_table
+* @param {WasmFpLookupSelectors} lookup_selectors
+* @param {WasmFpPolyComm | undefined} table_ids
+* @param {WasmFpLookupInfo} lookup_info
+* @param {WasmFpPolyComm | undefined} runtime_tables_selector
+*/
+  constructor(joint_lookup_used: boolean, lookup_table: Uint32Array, lookup_selectors: WasmFpLookupSelectors, table_ids: WasmFpPolyComm | undefined, lookup_info: WasmFpLookupInfo, runtime_tables_selector?: WasmFpPolyComm);
+/**
+*/
+  joint_lookup_used: boolean;
+/**
+*/
+  lookup_info: WasmFpLookupInfo;
+/**
+*/
+  lookup_selectors: WasmFpLookupSelectors;
+/**
+*/
+  lookup_table: Uint32Array;
+/**
+*/
+  runtime_tables_selector?: WasmFpPolyComm;
+/**
+*/
+  table_ids?: WasmFpPolyComm;
+}
+/**
+*/
 export class WasmFpOpeningProof {
   free(): void;
 /**
@@ -1192,8 +1293,16 @@ export class WasmFpPlonkVerificationEvals {
 * @param {WasmFpPolyComm} mul_comm
 * @param {WasmFpPolyComm} emul_comm
 * @param {WasmFpPolyComm} endomul_scalar_comm
+* @param {WasmFpPolyComm | undefined} xor_comm
+* @param {WasmFpPolyComm | undefined} range_check0_comm
+* @param {WasmFpPolyComm | undefined} range_check1_comm
+* @param {WasmFpPolyComm | undefined} foreign_field_add_comm
+* @param {WasmFpPolyComm | undefined} foreign_field_mul_comm
+* @param {WasmFpPolyComm | undefined} rot_comm
+* @param {WasmFpPolyComm | undefined} lookup_gate_comm
+* @param {WasmFpPolyComm | undefined} runtime_tables_comm
 */
-  constructor(sigma_comm: Uint32Array, coefficients_comm: Uint32Array, generic_comm: WasmFpPolyComm, psm_comm: WasmFpPolyComm, complete_add_comm: WasmFpPolyComm, mul_comm: WasmFpPolyComm, emul_comm: WasmFpPolyComm, endomul_scalar_comm: WasmFpPolyComm);
+  constructor(sigma_comm: Uint32Array, coefficients_comm: Uint32Array, generic_comm: WasmFpPolyComm, psm_comm: WasmFpPolyComm, complete_add_comm: WasmFpPolyComm, mul_comm: WasmFpPolyComm, emul_comm: WasmFpPolyComm, endomul_scalar_comm: WasmFpPolyComm, xor_comm?: WasmFpPolyComm, range_check0_comm?: WasmFpPolyComm, range_check1_comm?: WasmFpPolyComm, foreign_field_add_comm?: WasmFpPolyComm, foreign_field_mul_comm?: WasmFpPolyComm, rot_comm?: WasmFpPolyComm, lookup_gate_comm?: WasmFpPolyComm, runtime_tables_comm?: WasmFpPolyComm);
 /**
 */
   coefficients_comm: Uint32Array;
@@ -1208,7 +1317,16 @@ export class WasmFpPlonkVerificationEvals {
   endomul_scalar_comm: WasmFpPolyComm;
 /**
 */
+  foreign_field_add_comm?: WasmFpPolyComm;
+/**
+*/
+  foreign_field_mul_comm?: WasmFpPolyComm;
+/**
+*/
   generic_comm: WasmFpPolyComm;
+/**
+*/
+  lookup_gate_comm?: WasmFpPolyComm;
 /**
 */
   mul_comm: WasmFpPolyComm;
@@ -1217,7 +1335,22 @@ export class WasmFpPlonkVerificationEvals {
   psm_comm: WasmFpPolyComm;
 /**
 */
+  range_check0_comm?: WasmFpPolyComm;
+/**
+*/
+  range_check1_comm?: WasmFpPolyComm;
+/**
+*/
+  rot_comm?: WasmFpPolyComm;
+/**
+*/
+  runtime_tables_comm?: WasmFpPolyComm;
+/**
+*/
   sigma_comm: Uint32Array;
+/**
+*/
+  xor_comm?: WasmFpPolyComm;
 }
 /**
 */
@@ -1231,14 +1364,18 @@ export class WasmFpPlonkVerifierIndex {
 * @param {WasmFpSrs} srs
 * @param {WasmFpPlonkVerificationEvals} evals
 * @param {WasmFpShifts} shifts
+* @param {WasmFpLookupVerifier | undefined} lookup_index
 */
-  constructor(domain: WasmFpDomain, max_poly_size: number, public_: number, prev_challenges: number, srs: WasmFpSrs, evals: WasmFpPlonkVerificationEvals, shifts: WasmFpShifts);
+  constructor(domain: WasmFpDomain, max_poly_size: number, public_: number, prev_challenges: number, srs: WasmFpSrs, evals: WasmFpPlonkVerificationEvals, shifts: WasmFpShifts, lookup_index?: WasmFpLookupVerifier);
 /**
 */
   domain: WasmFpDomain;
 /**
 */
   evals: WasmFpPlonkVerificationEvals;
+/**
+*/
+  lookup_index?: WasmFpLookupVerifier;
 /**
 */
   max_poly_size: number;
@@ -1468,6 +1605,107 @@ export class WasmFqGateVector {
 }
 /**
 */
+export class WasmFqLookupFeatures {
+  free(): void;
+/**
+*/
+  joint_lookup_used: boolean;
+/**
+*/
+  patterns: WasmFqLookupPatterns;
+/**
+*/
+  uses_runtime_tables: boolean;
+}
+/**
+*/
+export class WasmFqLookupInfo {
+  free(): void;
+/**
+*/
+  features: WasmFqLookupFeatures;
+/**
+*/
+  max_joint_size: number;
+/**
+*/
+  max_per_row: number;
+}
+/**
+*/
+export class WasmFqLookupPatterns {
+  free(): void;
+/**
+*/
+  foreign_field_mul: boolean;
+/**
+*/
+  lookup: boolean;
+/**
+*/
+  range_check: boolean;
+/**
+*/
+  xor: boolean;
+}
+/**
+*/
+export class WasmFqLookupSelectors {
+  free(): void;
+/**
+* @param {WasmFqPolyComm | undefined} xor
+* @param {WasmFqPolyComm | undefined} lookup
+* @param {WasmFqPolyComm | undefined} range_check
+* @param {WasmFqPolyComm | undefined} ffmul
+*/
+  constructor(xor?: WasmFqPolyComm, lookup?: WasmFqPolyComm, range_check?: WasmFqPolyComm, ffmul?: WasmFqPolyComm);
+/**
+*/
+  ffmul?: WasmFqPolyComm;
+/**
+*/
+  lookup?: WasmFqPolyComm;
+/**
+*/
+  range_check?: WasmFqPolyComm;
+/**
+*/
+  xor?: WasmFqPolyComm;
+}
+/**
+*/
+export class WasmFqLookupVerifier {
+  free(): void;
+/**
+* @param {boolean} joint_lookup_used
+* @param {Uint32Array} lookup_table
+* @param {WasmFqLookupSelectors} lookup_selectors
+* @param {WasmFqPolyComm | undefined} table_ids
+* @param {WasmFqLookupInfo} lookup_info
+* @param {WasmFqPolyComm | undefined} runtime_tables_selector
+*/
+  constructor(joint_lookup_used: boolean, lookup_table: Uint32Array, lookup_selectors: WasmFqLookupSelectors, table_ids: WasmFqPolyComm | undefined, lookup_info: WasmFqLookupInfo, runtime_tables_selector?: WasmFqPolyComm);
+/**
+*/
+  joint_lookup_used: boolean;
+/**
+*/
+  lookup_info: WasmFqLookupInfo;
+/**
+*/
+  lookup_selectors: WasmFqLookupSelectors;
+/**
+*/
+  lookup_table: Uint32Array;
+/**
+*/
+  runtime_tables_selector?: WasmFqPolyComm;
+/**
+*/
+  table_ids?: WasmFqPolyComm;
+}
+/**
+*/
 export class WasmFqOpeningProof {
   free(): void;
 /**
@@ -1539,8 +1777,16 @@ export class WasmFqPlonkVerificationEvals {
 * @param {WasmFqPolyComm} mul_comm
 * @param {WasmFqPolyComm} emul_comm
 * @param {WasmFqPolyComm} endomul_scalar_comm
+* @param {WasmFqPolyComm | undefined} xor_comm
+* @param {WasmFqPolyComm | undefined} range_check0_comm
+* @param {WasmFqPolyComm | undefined} range_check1_comm
+* @param {WasmFqPolyComm | undefined} foreign_field_add_comm
+* @param {WasmFqPolyComm | undefined} foreign_field_mul_comm
+* @param {WasmFqPolyComm | undefined} rot_comm
+* @param {WasmFqPolyComm | undefined} lookup_gate_comm
+* @param {WasmFqPolyComm | undefined} runtime_tables_comm
 */
-  constructor(sigma_comm: Uint32Array, coefficients_comm: Uint32Array, generic_comm: WasmFqPolyComm, psm_comm: WasmFqPolyComm, complete_add_comm: WasmFqPolyComm, mul_comm: WasmFqPolyComm, emul_comm: WasmFqPolyComm, endomul_scalar_comm: WasmFqPolyComm);
+  constructor(sigma_comm: Uint32Array, coefficients_comm: Uint32Array, generic_comm: WasmFqPolyComm, psm_comm: WasmFqPolyComm, complete_add_comm: WasmFqPolyComm, mul_comm: WasmFqPolyComm, emul_comm: WasmFqPolyComm, endomul_scalar_comm: WasmFqPolyComm, xor_comm?: WasmFqPolyComm, range_check0_comm?: WasmFqPolyComm, range_check1_comm?: WasmFqPolyComm, foreign_field_add_comm?: WasmFqPolyComm, foreign_field_mul_comm?: WasmFqPolyComm, rot_comm?: WasmFqPolyComm, lookup_gate_comm?: WasmFqPolyComm, runtime_tables_comm?: WasmFqPolyComm);
 /**
 */
   coefficients_comm: Uint32Array;
@@ -1555,7 +1801,16 @@ export class WasmFqPlonkVerificationEvals {
   endomul_scalar_comm: WasmFqPolyComm;
 /**
 */
+  foreign_field_add_comm?: WasmFqPolyComm;
+/**
+*/
+  foreign_field_mul_comm?: WasmFqPolyComm;
+/**
+*/
   generic_comm: WasmFqPolyComm;
+/**
+*/
+  lookup_gate_comm?: WasmFqPolyComm;
 /**
 */
   mul_comm: WasmFqPolyComm;
@@ -1564,7 +1819,22 @@ export class WasmFqPlonkVerificationEvals {
   psm_comm: WasmFqPolyComm;
 /**
 */
+  range_check0_comm?: WasmFqPolyComm;
+/**
+*/
+  range_check1_comm?: WasmFqPolyComm;
+/**
+*/
+  rot_comm?: WasmFqPolyComm;
+/**
+*/
+  runtime_tables_comm?: WasmFqPolyComm;
+/**
+*/
   sigma_comm: Uint32Array;
+/**
+*/
+  xor_comm?: WasmFqPolyComm;
 }
 /**
 */
@@ -1578,14 +1848,18 @@ export class WasmFqPlonkVerifierIndex {
 * @param {WasmFqSrs} srs
 * @param {WasmFqPlonkVerificationEvals} evals
 * @param {WasmFqShifts} shifts
+* @param {WasmFqLookupVerifier | undefined} lookup_index
 */
-  constructor(domain: WasmFqDomain, max_poly_size: number, public_: number, prev_challenges: number, srs: WasmFqSrs, evals: WasmFqPlonkVerificationEvals, shifts: WasmFqShifts);
+  constructor(domain: WasmFqDomain, max_poly_size: number, public_: number, prev_challenges: number, srs: WasmFqSrs, evals: WasmFqPlonkVerificationEvals, shifts: WasmFqShifts, lookup_index?: WasmFqLookupVerifier);
 /**
 */
   domain: WasmFqDomain;
 /**
 */
   evals: WasmFqPlonkVerificationEvals;
+/**
+*/
+  lookup_index?: WasmFqLookupVerifier;
 /**
 */
   max_poly_size: number;
