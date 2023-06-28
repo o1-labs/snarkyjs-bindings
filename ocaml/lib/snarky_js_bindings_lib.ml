@@ -294,6 +294,32 @@ module Snarky = struct
       | Unchecked s ->
           Poseidon_sponge.squeeze s |> Impl.Field.constant
   end
+
+  module Foreign_field = struct
+    module FF = Kimchi_gadgets.Foreign_field
+    module Range_check = Kimchi_gadgets.Range_check
+    module External_checks = FF.External_checks
+
+    type t = Impl.field FF.Element.Standard.t
+
+    type t_const = Impl.field FF.Element.Standard.limbs_type
+
+    (* high-level API of self-contained methods which do all necessary checks *)
+
+    let assert_valid_element (x : t) (p : t_const) : unit =
+      let external_checks = External_checks.create (module Impl) in
+      let _ = FF.valid_element (module Impl) external_checks x p in
+      FF.constrain_external_checks (module Impl) external_checks p
+
+    let sum_chain (x : t array) (ops : FF.op_mode array) (p : t_const) : t =
+      FF.sum_chain (module Impl) (Array.to_list x) (Array.to_list ops) p
+
+    let mul (x : t) (y : t) (p : t_const) : t =
+      let external_checks = External_checks.create (module Impl) in
+      let z = FF.mul (module Impl) external_checks x y p in
+      FF.constrain_external_checks (module Impl) external_checks p ;
+      z
+  end
 end
 
 let snarky =
@@ -397,6 +423,16 @@ let snarky =
 
             method squeeze = Snarky.Poseidon.sponge_squeeze
           end
+      end
+
+    val foreignField =
+      let open Snarky.Foreign_field in
+      object%js
+        val assertValidElement = assert_valid_element
+
+        val sumChain = sum_chain
+
+        val mul = mul
       end
   end
 
