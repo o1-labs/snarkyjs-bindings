@@ -7,6 +7,7 @@ module Sc =
   Pickles.Scalar_challenge.Make (Impl) (Pickles.Step_main_inputs.Inner_curve)
     (Challenge)
     (Pickles.Endo.Step_inner_curve)
+module Bignum_bigint = Snarky_backendless.Backend_extended.Bignum_bigint
 module Js = Js_of_ocaml.Js
 
 let _console_log_string s = Js_of_ocaml.Firebug.console##log (Js.string s)
@@ -319,6 +320,92 @@ module Snarky = struct
       let z = FF.mul (module Impl) external_checks x y p in
       FF.constrain_external_checks (module Impl) external_checks p ;
       z
+
+    external bigint_to_ml : Js.Unsafe.any Js.t -> Bignum_bigint.t
+      = "ml_z_of_bigint"
+
+    module Curve = struct
+      module EC = Kimchi_gadgets.Ec_group
+      module Curve_params = Kimchi_gadgets.Curve_params
+      module Affine = Kimchi_gadgets.Affine
+
+      type params = Curve_params.t
+
+      type params_without_ia =
+        { modulus : Bignum_bigint.t
+        ; order : Bignum_bigint.t
+        ; a : Bignum_bigint.t
+        ; b : Bignum_bigint.t
+        ; gen : Affine.bignum_point
+        }
+
+      type params_var = Impl.field Curve_params.InCircuit.t
+
+      type t_point = Impl.field Affine.t
+
+      let create ({ modulus; order; a; b; gen } : params_without_ia) : params =
+        let params = { Curve_params.default with modulus; order; a; b; gen } in
+        params.ia <- EC.compute_ia_points params ;
+        params
+
+      let params_to_vars (params : params) : params_var =
+        Curve_params.to_circuit_constants (module Impl) params
+
+      let add (g : t_point) (h : t_point) (curve : params_var) : t_point =
+        let external_checks = External_checks.create (module Impl) in
+        let z = EC.add (module Impl) external_checks curve g h in
+        FF.constrain_external_checks (module Impl) external_checks curve.modulus ;
+        z
+
+      let double (g : t_point) (curve : params_var) : t_point =
+        let external_checks = External_checks.create (module Impl) in
+        let z = EC.double (module Impl) external_checks curve g in
+        FF.constrain_external_checks (module Impl) external_checks curve.modulus ;
+        z
+
+      let negate (g : t_point) (curve : params_var) : t_point =
+        EC.negate (module Impl) curve g
+
+      let assert_on_curve (g : t_point) (curve : params_var) : unit =
+        let external_checks = External_checks.create (module Impl) in
+        EC.is_on_curve (module Impl) external_checks curve g ;
+        FF.constrain_external_checks (module Impl) external_checks curve.modulus
+
+      let scale (g : t_point) (scalar : Boolean.var array) (curve : params_var)
+          : t_point =
+        let external_checks = External_checks.create (module Impl) in
+        let scalar = Array.to_list scalar in
+        let z = EC.scalar_mul (module Impl) external_checks curve scalar g in
+        FF.constrain_external_checks (module Impl) external_checks curve.modulus ;
+        z
+
+      let check_subgroup (g : t_point) (curve : params_var) : unit =
+        let external_checks = External_checks.create (module Impl) in
+        EC.check_subgroup (module Impl) external_checks curve g ;
+        FF.constrain_external_checks (module Impl) external_checks curve.modulus
+    end
+
+    module Ecdsa = struct
+      type signature = t * t
+
+      let verify (signature : signature) (msg_hash : t)
+          (public_key : Curve.t_point) (curve : Curve.params_var) =
+        let base_checks = External_checks.create (module Impl) in
+        let scalar_checks = External_checks.create (module Impl) in
+        Kimchi_gadgets.Ecdsa.verify
+          (module Impl)
+          base_checks scalar_checks curve public_key signature msg_hash ;
+        FF.constrain_external_checks (module Impl) base_checks curve.modulus ;
+        FF.constrain_external_checks (module Impl) scalar_checks curve.order
+
+      let assert_valid_signature (signature : signature)
+          (curve : Curve.params_var) : unit =
+        let scalar_checks = External_checks.create (module Impl) in
+        Kimchi_gadgets.Ecdsa.signature_scalar_check
+          (module Impl)
+          scalar_checks curve signature ;
+        FF.constrain_external_checks (module Impl) scalar_checks curve.order
+    end
   end
 end
 
@@ -433,6 +520,36 @@ let snarky =
         val sumChain = sum_chain
 
         val mul = mul
+
+        val bigintToMl = bigint_to_ml
+      end
+
+    val foreignCurve =
+      let open Snarky.Foreign_field in
+      object%js
+        val create = Curve.create
+
+        val paramsToVars = Curve.params_to_vars
+
+        val add = Curve.add
+
+        val double = Curve.double
+
+        val negate = Curve.negate
+
+        val assertOnCurve = Curve.assert_on_curve
+
+        val scale = Curve.scale
+
+        val checkSubgroup = Curve.check_subgroup
+      end
+
+    val ecdsa =
+      let open Snarky.Foreign_field in
+      object%js
+        val verify = Ecdsa.verify
+
+        val assertValidSignature = Ecdsa.assert_valid_signature
       end
   end
 
