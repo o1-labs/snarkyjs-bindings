@@ -236,6 +236,24 @@ module Poseidon = struct
         Poseidon_sponge.squeeze s |> Impl.Field.constant
 end
 
+module SHA = struct
+  let create message nist length =
+    let message_array = Array.to_list message in
+    if Js.to_bool nist then
+      Kimchi_gadgets.Keccak.nist_sha3 (module Impl) length message_array
+    else Kimchi_gadgets.Keccak.ethereum (module Impl) message_array
+
+  let field_bytes_of_hex hex =
+    Array.of_list
+      (Kimchi_gadgets.Common.field_bytes_of_hex
+         (module Impl)
+         (Js.to_string hex) )
+
+  let check_bits value bits =
+    Kimchi_gadgets.Lookup.less_than_bits (module Impl) ~bits value ;
+    Kimchi_gadgets.Range_check.bits64 (module Impl) Impl.Field.zero
+end
+
 let snarky =
   object%js
     method exists = exists
@@ -338,5 +356,14 @@ let snarky =
 
             method squeeze = Poseidon.sponge_squeeze
           end
+      end
+
+    val sha =
+      object%js
+        method create = SHA.create
+
+        method fieldBytesFromHex = SHA.field_bytes_of_hex
+
+        method checkBits = SHA.check_bits
       end
   end

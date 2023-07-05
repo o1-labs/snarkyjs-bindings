@@ -8,6 +8,10 @@ module Poseidon : sig
   type sponge
 end
 
+(**
+This type definition is copy/pasted from the `snarkyjs_bindings.ml` using an LSP to see the type definition of `snarky`.
+To add to this type, you can use an LSP to see the type definition of `snarky` in `snarkyjs_bindings.ml` and copy/paste the type definition here.
+*)
 val snarky :
   < exists : (int -> (unit -> Impl.field array) -> Field.t array) Js.meth
   ; existsVar : ((unit -> Impl.field) -> Field.t) Js.meth
@@ -122,6 +126,18 @@ val snarky :
               Kimchi_types.VerifierIndex.verifier_index
            -> bool Js.t )
           Js.meth >
+      Js.t
+      Js.readonly_prop
+  ; sha :
+      < checkBits :
+          (Impl.field Snarky_backendless.Cvar.t -> int -> unit) Js.meth
+      ; create :
+          (   Impl.field Snarky_backendless.Cvar.t array
+           -> bool Js.t
+           -> int
+           -> Impl.field Snarky_backendless.Cvar.t array )
+          Js.meth
+      ; fieldBytesFromHex : (Js.js_string Js.t -> Impl.field array) Js.meth >
       Js.t
       Js.readonly_prop >
   Js.t
