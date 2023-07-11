@@ -291,10 +291,11 @@ module Transaction_hash = struct
     let kp = keypair () in
     let payload : Signed_command_payload.t =
       { Signed_command_payload.dummy with
-        common =
-          { Signed_command_payload.dummy.common with
-            fee_payer_pk = Signature_lib.Public_key.compress kp.public_key
-          }
+        body =
+          Payment
+            { Mina_base.Payment_payload.dummy with
+              receiver_pk = Signature_lib.Public_key.compress kp.public_key
+            }
       }
     in
     let payment = Signed_command.sign kp payload in
